@@ -12,10 +12,22 @@ file = open(fileName)
 dataRaw = file.read()
 
 data = json.loads(dataRaw)
+# Event fields: title, startdate, enddate, description, geo
 events = data['events']
 calendarEvents = []
 for i in events:
+    print(i)
     toAdd = None # TODO: Built calendar event
     calendarEvents += [toAdd]
 
-# TODO: Create ical file with events
+cal = Calendar()
+for i in events:
+    event = Event()
+    event.add('summary', i['description'])
+    event.add('dtstart', i['startdate'])
+    event.add('dtend', i['enddate'])
+    event.add('location', i['geo'])
+    cal.add_component(event)
+
+# Print ical contents
+print(cal.to_ical())
