@@ -17,7 +17,22 @@ events = data['events']
 calendarEvents = []
 for i in events:
     print(i)
-    toAdd = None # TODO: Built calendar event
+    # Extract needed data
+    trackername = None
+    value = None
+    # Now build event fields
+    startdate = None
+    enddate = startdate
+    description = '#' + trackername + '(' + value + ')'
+    geo = geo
+    title = '#nomie #' + trackername
+    toAdd = {
+            'title': title,
+            'startdate': startdate,
+            'enddate': enddate,
+            'description': description,
+            'geo': geo
+            }
     calendarEvents += [toAdd]
 
 cal = Calendar()
