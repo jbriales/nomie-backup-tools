@@ -1,6 +1,7 @@
 # Clear duplicates from Dropbox backup
 import json
 from icalendar import Calendar, Event
+import datetime
 
 print('Enter the file (and path if needed) for your Nomie backup.')
 try:
@@ -30,7 +31,9 @@ for i in events:
         if value == None:
             value = 0
         # Now build event fields
-        startdate = int(elements[2])
+        startdate = datetime.datetime.fromtimestamp(
+            int(elements[2])
+        )
         enddate = startdate
         description = '#' + trackername + '(' + str(value) + ')'
         geo = i['geo']
@@ -48,7 +51,7 @@ for i in events:
         print(i)
 
 cal = Calendar()
-for i in events:
+for i in calendarEvents:
     event = Event()
     event.add('summary', i['description'])
     event.add('dtstart', i['startdate'])
