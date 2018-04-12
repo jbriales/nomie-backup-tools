@@ -36,7 +36,7 @@ for i in events:
         )
         enddate = startdate
         description = '#' + trackername + '(' + str(value) + ')'
-        geo = i['geo']
+        geo = '["",' + str(i['geo'][0]) + ',' + str(i['geo'][1]) + ']'
         title = '#nomie #' + trackername
         toAdd = {
                 'title': title,
