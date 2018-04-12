@@ -10,30 +10,42 @@ except:
     fileName = raw_input('> ')
 file = open(fileName)
 dataRaw = file.read()
-
 data = json.loads(dataRaw)
-# Event fields: title, startdate, enddate, description, geo
+
+trackers = data['trackers']
+nameMap = {}
+for i in trackers:
+    nameMap[i['_id']] = i['label']
+
 events = data['events']
+# Event fields: title, startdate, enddate, description, geo
 calendarEvents = []
 for i in events:
-    print(i)
+    elements = i['_id'].split('|')
     # Extract needed data
-    trackername = None
-    value = None
-    # Now build event fields
-    startdate = None
-    enddate = startdate
-    description = '#' + trackername + '(' + value + ')'
-    geo = geo
-    title = '#nomie #' + trackername
-    toAdd = {
-            'title': title,
-            'startdate': startdate,
-            'enddate': enddate,
-            'description': description,
-            'geo': geo
-            }
-    calendarEvents += [toAdd]
+    try:
+        trackername = nameMap[elements[3]]
+        print(trackername)
+        value = i['value']
+        if value == None:
+            value = 0
+        # Now build event fields
+        startdate = int(elements[2])
+        enddate = startdate
+        description = '#' + trackername + '(' + str(value) + ')'
+        geo = i['geo']
+        title = '#nomie #' + trackername
+        toAdd = {
+                'title': title,
+                'startdate': startdate,
+                'enddate': enddate,
+                'description': description,
+                'geo': geo
+                }
+        calendarEvents += [toAdd]
+    except:
+        print("Shoot! This record seems to be corrupted. Try manually adding it or fixing the file.")
+        print(i)
 
 cal = Calendar()
 for i in events:
