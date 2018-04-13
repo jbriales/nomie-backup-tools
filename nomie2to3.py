@@ -21,6 +21,7 @@ for i in trackers:
 events = data['events']
 # Event fields: title, startdate, enddate, description, geo
 calendarEvents = []
+corruptedCount = 0
 for i in events:
     elements = i['_id'].split('|')
     # Extract needed data
@@ -47,8 +48,11 @@ for i in events:
                 }
         calendarEvents += [toAdd]
     except:
+        corruptedCount += 1
         print("Shoot! This record seems to be corrupted. Try manually adding it or fixing the file.")
         print(i)
+
+print("Corrupted record count: " + str(corruptedCount))
 
 cal = Calendar()
 for i in calendarEvents:
@@ -60,4 +64,8 @@ for i in calendarEvents:
     cal.add_component(event)
 
 # Print ical contents
-print(cal.to_ical())
+rawCalendar = cal.to_ical()
+#print(rawCalendar)
+outputFileName = input("File name to write to (e.g. out.ical): ")
+outFile = open(outputFileName, 'w')
+outFile.write(str(rawCalendar))
