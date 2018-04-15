@@ -67,5 +67,6 @@ for i in calendarEvents:
 rawCalendar = cal.to_ical()
 #print(rawCalendar)
 outputFileName = input("File name to write to (e.g. out.ical): ")
-outFile = open(outputFileName, 'w')
-outFile.write(str(rawCalendar))
+outFile = open(outputFileName, 'wb')
+outFile.write(cal.to_ical())
+outFile.close()
