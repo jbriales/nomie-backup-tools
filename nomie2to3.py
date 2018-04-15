@@ -18,15 +18,26 @@ nameMap = {}
 for i in trackers:
     nameMap[i['_id']] = i['label']
 
+# Support for changing the name of a tracker for a substitute
+substitutes = {}
+
 events = data['events']
 # Event fields: title, startdate, enddate, description, geo
 calendarEvents = []
 corruptedCount = 0
+addedCount = 0
 for i in events:
     elements = i['_id'].split('|')
     # Extract needed data
     try:
         trackername = nameMap[elements[3]]
+        # Substitute tracker name if substitute is defined
+        try:
+            trackername = substitutes[trackername]
+        except:
+            doNothing = True
+        # As Nomie 3 doesn't support spaces in tracker names, substitute with underscores
+        trackername = trackername.replace(' ', '_')
         print(trackername)
         value = i['value']
         if value == None:
@@ -47,12 +58,14 @@ for i in events:
                 'geo': geo
                 }
         calendarEvents += [toAdd]
+        addedCount += 1
     except:
         corruptedCount += 1
         print("Shoot! This record seems to be corrupted. Try manually adding it or fixing the file.")
         print(i)
 
 print("Corrupted record count: " + str(corruptedCount))
+print("Events successfully added: " + str(addedCount))
 
 cal = Calendar()
 for i in calendarEvents:
