@@ -19,7 +19,7 @@ def convert():
         message = request.json('jsoncontents')
     except:
         message = request.form['jsoncontents']
-    return nomie2to3.convert(json.loads(message))
+    return str(nomie2to3.convert(json.loads(message))).replace('\\r\\n', '<br />')
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 2525))
