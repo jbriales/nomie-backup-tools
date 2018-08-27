@@ -3,6 +3,13 @@ import json
 from icalendar import Calendar, Event
 from datetime import datetime, timedelta
 
+import os
+import sys
+
+DATA_PATH = os.path.expanduser("~/Dropbox/Apps/Nomie/")
+BACKUP_PATH = os.path.join(DATA_PATH, "Android-Moto_G_(4)-1980787128.nomie.json")
+ICAL_PATH = os.path.join(DATA_PATH, "Android-Moto_G_(4)-1980787128.nomie.ical")
+
 def convert(data):
     trackers = data['trackers']
     nameMap = {}
@@ -43,10 +50,11 @@ def convert(data):
             enddate = datetime.fromtimestamp(timestamp_in_secs)
             # Start date is <value> seconds before the end
             startdate = enddate - timedelta(seconds=event_value)
-            description = '#' + trackername + '(' + str(event_value) + ')'
+            duration_str = str(timedelta(seconds=event_value)).split(".")[0]  # drop microseconds
             # Now save geo information without place name
             geo = '["",' + str(i['geo'][0]) + ',' + str(i['geo'][1]) + ']'
-            title = '#nomie #' + trackername
+            title = '#nomie: ' + trackername
+            description = trackername + ' for ' + duration_str
             toAdd = {
                     'title': title,
                     'startdate': startdate,
@@ -75,20 +83,17 @@ def convert(data):
         cal.add_component(event)
     return cal.to_ical()
 
-if __name__ == '__main__':
-    print('Enter the file (and path if needed) for your Nomie backup.')
-    try:
-        fileName = input('> ')
-    except:
-        print('Re-input. Program has fallen back to Python 2.x protocols')
-        fileName = raw_input('> ')
-    file = open(fileName)
-    dataRaw = file.read()
-    data = json.loads(dataRaw)
 
-# Print ical contents
-    rawCalendar = convert(data)
-    outputFileName = input("File name to write to (e.g. out.ical): ")
-    outFile = open(outputFileName, 'wb')
-    outFile.write(rawCalendar)
+if __name__ == '__main__':
+
+    # Ensure backup-file exists
+    if not os.path.exists(BACKUP_PATH):
+        sys.stdout.write("Failed - Empty summary\n")
+        sys.exit(False)
+    file = open(BACKUP_PATH)
+    data = json.loads(file.read())
+
+    # Print ical contents
+    outFile = open(ICAL_PATH, 'wb')
+    outFile.write(convert(data))
     outFile.close()
