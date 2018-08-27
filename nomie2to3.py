@@ -1,7 +1,7 @@
 # Clear duplicates from Dropbox backup
 import json
 from icalendar import Calendar, Event
-import datetime
+from datetime import datetime, timedelta
 
 def convert(data):
     trackers = data['trackers']
@@ -30,17 +30,20 @@ def convert(data):
             # As Nomie 3 doesn't support spaces in tracker names, substitute with underscores
             trackername = trackername.replace(' ', '_')
             print(trackername)
-            value = i['value']
+            # Value should be time in seconds of the event
+            # Note there is one single event for timer (at the end of timer)
+            event_value = i['value']
             # Currently automatically convert lack of value to 0
-            if value == None:
-                value = 0
-            rawTimestampInMillisecs = elements[2]
-            timestampInSecs = int(rawTimestampInMillisecs) / 1000.0
+            if event_value == None:
+                event_value = 0
+            raw_timestamp_in_millisecs = elements[2]
+            timestamp_in_secs = int(raw_timestamp_in_millisecs) / 1000.0
             # Now build event fields
-            startdate = datetime.datetime.fromtimestamp(timestampInSecs)
-            # End date is currently the same as the start date
-            enddate = startdate
-            description = '#' + trackername + '(' + str(value) + ')'
+            # Time stored is that of end
+            enddate = datetime.fromtimestamp(timestamp_in_secs)
+            # Start date is <value> seconds before the end
+            startdate = enddate - timedelta(seconds=event_value)
+            description = '#' + trackername + '(' + str(event_value) + ')'
             # Now save geo information without place name
             geo = '["",' + str(i['geo'][0]) + ',' + str(i['geo'][1]) + ']'
             title = '#nomie #' + trackername
