@@ -34,11 +34,10 @@ def convert(data):
             # Currently automatically convert lack of value to 0
             if value == None:
                 value = 0
-            rawTimestamp = elements[2]
+            rawTimestampInMillisecs = elements[2]
+            timestampInSecs = int(rawTimestampInMillisecs) / 1000.0
             # Now build event fields
-            startdate = datetime.datetime.fromtimestamp(
-                int(rawTimestamp)
-            )
+            startdate = datetime.datetime.fromtimestamp(timestampInSecs)
             # End date is currently the same as the start date
             enddate = startdate
             description = '#' + trackername + '(' + str(value) + ')'
