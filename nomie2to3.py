@@ -1,4 +1,6 @@
-# Clear duplicates from Dropbox backup
+#!/usr/bin/env python3
+# coding=utf-8
+
 import json
 from icalendar import Calendar, Event
 from datetime import datetime, timedelta
@@ -9,6 +11,7 @@ import sys
 DATA_PATH = os.path.expanduser("~/Dropbox/Apps/Nomie/")
 BACKUP_PATH = os.path.join(DATA_PATH, "Android-Moto_G_(4)-1980787128.nomie.json")
 ICAL_PATH = os.path.join(DATA_PATH, "Android-Moto_G_(4)-1980787128.nomie.ical")
+
 
 def convert(data):
     trackers = data['trackers']
